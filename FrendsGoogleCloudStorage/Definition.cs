@@ -5,44 +5,69 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FrendsGoogleCloudStorage
 {
-    /// <summary>
-    /// Parameters class usually contains parameters that are required.
-    /// </summary>
-    public class Parameters
+    public enum AuthenticationType { ServiceAccount };
+    public class ObjectDetails
     {
         /// <summary>
-        /// Something that will be repeated.
+        /// Bucket's name where object is being stored in Cloud Storage.
         /// </summary>
+        [Required]
         [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue("Lorem ipsum dolor sit amet.")]
-        public string Message { get; set; }
+        public string BucketName { get; set; }
+
+        /// <summary>
+        /// Object's name in Cloud Storage.
+        /// </summary>
+        [Required]
+        [DisplayFormat(DataFormatString = "Text")]
+        public string ObjectName { get; set; }
+    }
+
+    public class DestinationDetails
+    {
+        /// <summary>
+        /// Path where object would be stored.
+        /// </summary>
+        [Required]
+        [DisplayFormat(DataFormatString = "Text")]
+        public string Path { get; set; }
+
+        /// <summary>
+        /// Name of the object.
+        /// </summary>
+        [Required]
+        [DisplayFormat(DataFormatString = "Text")]
+        public string Name { get; set; }
+    }
+
+    public class Authentication
+    {
+        [DefaultValue(AuthenticationType.ServiceAccount)]
+        public AuthenticationType AuthenticationType { get; set; }
+
+        /// <summary>
+        /// Service account authentication specific properties.
+        /// </summary>
+        [UIHint(nameof(AuthenticationType), "", AuthenticationType.ServiceAccount)]
+        public ServiceAccountAuthentication ServiceAccount { get; set; }
     }
 
     /// <summary>
-    /// Options class provides additional optional parameters.
+    /// Service account authentication specific properties.
     /// </summary>
-    public class Options
+    public class ServiceAccountAuthentication
     {
-        /// <summary>
-        /// Number of times input is repeated.
-        /// </summary>
-        [DefaultValue(3)]
-        public int Amount { get; set; }
-
-        /// <summary>
-        /// How repeats of the input are separated.
-        /// </summary>
-        [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue(" ")]
-        public string Delimiter { get; set; }
+        [Required]
+        [DisplayFormat(DataFormatString = "Json")]
+        public string ServiceAccountJson { get; set; }
     }
 
     public class Result
     {
         /// <summary>
-        /// Contains the input repeated the specified number of times.
+        /// Contains the result message.
         /// </summary>
         [DisplayFormat(DataFormatString = "Text")]
-        public string Replication;
+        public string Message;
     }
 }

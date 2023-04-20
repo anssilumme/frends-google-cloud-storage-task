@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel;
+using System.IO;
+using System.Text;
 using System.Threading;
-using Microsoft.CSharp; // You can remove this if you don't need dynamic type in .NET Standard frends Tasks
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 
 #pragma warning disable 1591
 
@@ -9,28 +12,39 @@ namespace FrendsGoogleCloudStorage
     public static class CloudStorageTask
     {
         /// <summary>
-        /// This is task
-        /// Documentation: https://github.com/CommunityHiQ/FrendsGoogleCloudStorage
+        /// This Task fetches object from Google Cloud Storage.
         /// </summary>
-        /// <param name="input">What to repeat.</param>
-        /// <param name="options">Define if repeated multiple times. </param>
+        /// <param name="objectDetails">Details of the downloadable object.</param>
+        /// <param name="destination">Details of the object's destination.</param>
+        /// <param name="authentication">Authentication details.</param>
         /// <param name="cancellationToken"></param>
-        /// <returns>{string Replication} </returns>
-        public static Result CloudStorage(Parameters input, [PropertyTab] Options options, CancellationToken cancellationToken)
+        /// <returns>{string Message} </returns>
+        public static Result GetObject([PropertyTab] ObjectDetails objectDetails, [PropertyTab] DestinationDetails destination, [PropertyTab] Authentication authentication, CancellationToken cancellationToken)
         {
-            var repeats = new string[options.Amount];
 
-            for (var i = 0; i < options.Amount; i++)
+            
+            var storageClient = StorageClient.Create(GoogleCredential.FromJson(authentication.ServiceAccount.ServiceAccountJson));
+
+            var stringBuilder = new StringBuilder(destination.Path);
+
+            if (destination.Path.EndsWith(Path.DirectorySeparatorChar.ToString()))
             {
-                // It is good to check the cancellation token somewhere you spend lot of time, e.g. in loops.
-                cancellationToken.ThrowIfCancellationRequested();
-
-                repeats[i] = input.Message;
+                stringBuilder.Append(destination.Name);
             }
+            else
+            {
+                stringBuilder.Append(Path.DirectorySeparatorChar).Append(destination.Name);
+            }
+
+            var destinationPath = stringBuilder.ToString();
+            
+            using var outputFile = File.OpenWrite(destinationPath);
+
+            storageClient.DownloadObject(objectDetails.BucketName, objectDetails.ObjectName, outputFile);
 
             var output = new Result
             {
-                Replication = string.Join(options.Delimiter, repeats)
+                Message = $"Downloaded {objectDetails.ObjectName} to {destinationPath}."
             };
 
             return output;

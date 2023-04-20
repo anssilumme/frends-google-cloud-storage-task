@@ -1,7 +1,7 @@
 ﻿{
 	"Tasks": [
 		{
-			"TaskMethod": "FrendsGoogleCloudStorage.CloudStorageTask.CloudStorage"
+			"TaskMethod": "FrendsGoogleCloudStorage.CloudStorageTask.GetObject"
 		}
 	]
 }
