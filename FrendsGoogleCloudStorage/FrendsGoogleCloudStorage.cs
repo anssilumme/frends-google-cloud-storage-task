@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using FrendsGoogleCloudStorage.Definitions;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
@@ -20,13 +21,13 @@ namespace FrendsGoogleCloudStorage
         /// <param name="authentication">Authentication details.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>{string Message} </returns>
-        public static Result GetObject([PropertyTab] ObjectDetails objectDetails, [PropertyTab] Destination destination, [PropertyTab] Authentication authentication, CancellationToken cancellationToken)
+        public static Task<Result> GetObject([PropertyTab] ObjectDetails objectDetails, [PropertyTab] Destination destination, [PropertyTab] Authentication authentication, CancellationToken cancellationToken)
         {
             var storageClient = StorageClient.Create(GoogleCredential.FromJson(authentication.ServiceAccount.ServiceAccountJson));
             return DownloadObject(storageClient, objectDetails, destination, cancellationToken);
         }
 
-        private static Result DownloadObject(StorageClient storageClient, ObjectDetails objectDetails, Destination destination, CancellationToken cancellationToken)
+        private static async Task<Result> DownloadObject(StorageClient storageClient, ObjectDetails objectDetails, Destination destination, CancellationToken cancellationToken)
         {
             try
             {
@@ -68,7 +69,7 @@ namespace FrendsGoogleCloudStorage
 
             var destinationPath = stringBuilder.ToString();
             using var outputFile = File.OpenWrite(destinationPath);
-            storageClient.DownloadObjectAsync(objectDetails.BucketName, objectDetails.ObjectName, outputFile, null, cancellationToken);
+            await storageClient.DownloadObjectAsync(objectDetails.BucketName, objectDetails.ObjectName, outputFile, null, cancellationToken);
 
             var output = new Result
             {
