@@ -22,6 +22,12 @@ namespace FrendsGoogleCloudStorage
         /// <returns>{string Message} </returns>
         public static Result GetObject([PropertyTab] ObjectDetails objectDetails, [PropertyTab] Destination destination, [PropertyTab] Authentication authentication, CancellationToken cancellationToken)
         {
+            var storageClient = StorageClient.Create(GoogleCredential.FromJson(authentication.ServiceAccount.ServiceAccountJson));
+            return DownloadObject(storageClient, objectDetails, destination, cancellationToken);
+        }
+
+        private static Result DownloadObject(StorageClient storageClient, ObjectDetails objectDetails, Destination destination, CancellationToken cancellationToken)
+        {
             try
             {
                 if (!Directory.Exists(destination.Path))
@@ -39,7 +45,7 @@ namespace FrendsGoogleCloudStorage
                         };
                     }
                 }
-            } 
+            }
             catch (IOException e)
             {
                 return new Result
@@ -48,8 +54,6 @@ namespace FrendsGoogleCloudStorage
                     Message = e.Message
                 };
             }
-            
-            var storageClient = StorageClient.Create(GoogleCredential.FromJson(authentication.ServiceAccount.ServiceAccountJson));
 
             var stringBuilder = new StringBuilder(destination.Path);
 
@@ -63,14 +67,12 @@ namespace FrendsGoogleCloudStorage
             }
 
             var destinationPath = stringBuilder.ToString();
-            
             using var outputFile = File.OpenWrite(destinationPath);
-
-            storageClient.DownloadObject(objectDetails.BucketName, objectDetails.ObjectName, outputFile);
+            storageClient.DownloadObjectAsync(objectDetails.BucketName, objectDetails.ObjectName, outputFile, null, cancellationToken);
 
             var output = new Result
             {
-                Success= true,
+                Success = true,
                 Message = $"Downloaded {objectDetails.ObjectName} to {destinationPath}."
             };
 
