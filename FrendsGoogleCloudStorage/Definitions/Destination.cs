@@ -22,9 +22,16 @@ namespace FrendsGoogleCloudStorage.Definitions
         /// Flag whether to create directory if given directory does not exist.
         /// </summary>
         [Required]
-        [DisplayFormat(DataFormatString = "Yes/No")]
         [DefaultValue(false)]
         public bool CreateDirectoryIfNotExist { get; set; }
+
+        /// <summary>
+        /// Flag whether to throw DirectoryNotFoundException if given directory does not exist.
+        /// </summary>
+        [Required]
+        [DefaultValue(false)]
+        [UIHint("Throw exception if directory does not exist and is chosen not to create one.")]
+        public bool ThrowExceptionIfDirectoryNotExistAndNotCreated { get; set; }
 
         /// <summary>
         /// Name of the object.

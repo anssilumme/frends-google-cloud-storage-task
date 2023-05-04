@@ -40,6 +40,10 @@ namespace FrendsGoogleCloudStorage
                     {
                         DirectoryInfo directoryInfo = Directory.CreateDirectory(destination.Path);
                     }
+                    else if (destination.ThrowExceptionIfDirectoryNotExistAndNotCreated)
+                    {
+                        throw new DirectoryNotFoundException($"Directory not found: {destination.Path}");
+                    }
                     else
                     {
                         return new Result
