@@ -27,14 +27,16 @@ namespace FrendsGoogleCloudStorageTest
         }
 
         [Fact]
-        public async void DownloadObject_WithCreateNewObjectIfNotExistTrue_FileCreated()
+        public void DownloadObject_WithCreateNewObjectIfNotExistTrue_FileCreated()
         {
-            _mockStorageClient.When(x => x.DownloadObjectAsync(default, default, default, null, default)).Do(callInfo =>
+            _destination.Name = "DownloadObject_WithCreateNewObjectIfNotExistTrue_FileCreated.txt";
+
+            _mockStorageClient.When(x => x.DownloadObjectAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<FileStream>(), null, Arg.Any<CancellationToken>())).Do(callInfo =>
             {
+                _outputHelper.WriteLine("Substituting object download.");
                 WriteTestContent(callInfo.Arg<FileStream>(), "Test content from DownloadObject_WithCreateNewObjectIfNotExistTrue_FileCreated.");
             });
-            _destination.Name = "DownloadObject_WithCreateNewObjectIfNotExistTrue_FileCreated.txt";
-            await CloudStorageTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
+            CloudStorageTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
 
             _outputHelper.WriteLine($"Output path: {_destination.Path}.");
             _outputHelper.WriteLine($"Output filename: {_destination.Name}.");
@@ -42,10 +44,34 @@ namespace FrendsGoogleCloudStorageTest
             Assert.True(File.Exists(Path.Combine(_destination.Path, _destination.Name)));
         }
 
-        internal static void WriteTestContent(FileStream fileStream, string content)
+        [Fact]
+        public void DownloadObject_WithCreateNewObjectIfNotExistFalse_FileNotCreated()
+        {
+            _destination.Name = "DownloadObject_WithCreateNewObjectIfNotExistFalse_FileNotCreated.txt";
+            _destination.Path = Path.Combine(_destination.Path, "DownloadObject_WithCreateNewObjectIfNotExistFalse_FileNotCreated");
+            _destination.CreateDirectoryIfNotExist = false;
+
+            _mockStorageClient.When(x => x.DownloadObjectAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<FileStream>(), null, Arg.Any<CancellationToken>())).Do(callInfo =>
+            {
+                _outputHelper.WriteLine("Substituting object download.");
+                WriteTestContent(callInfo.Arg<FileStream>(), "Test content from DownloadObject_WithCreateNewObjectIfNotExistFalse_FileNotCreated. This content should not exist.");
+            });        
+            var result = CloudStorageTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
+
+            _outputHelper.WriteLine($"Output path: {_destination.Path}.");
+            _outputHelper.WriteLine($"Output filename: {_destination.Name}.");
+            _outputHelper.WriteLine($"Output result: {result.Result.Success}");
+            Assert.False(Directory.Exists(_destination.Path));
+            Assert.False(File.Exists(Path.Combine(_destination.Path, _destination.Name)));
+            Assert.False(result.Result.Success);
+        }
+
+        internal void WriteTestContent(FileStream fileStream, string content)
         {
             byte[] contentBytes = new UTF8Encoding(true).GetBytes(content);
             fileStream.Write(contentBytes, 0, contentBytes.Length);
+            fileStream.Close();
+            _outputHelper.WriteLine("File write complete.");
         }
     }
 }
