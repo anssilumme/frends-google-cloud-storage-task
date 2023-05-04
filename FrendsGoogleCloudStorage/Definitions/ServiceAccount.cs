@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -14,7 +15,7 @@ namespace FrendsGoogleCloudStorage.Definitions
         /// Service Account JSON.
         /// </summary>
         [Required]
-        [DisplayFormat(DataFormatString = "Json")]
+        [PasswordPropertyText]
         public string ServiceAccountJson { get; set; }
     }
 }
