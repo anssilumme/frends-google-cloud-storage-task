@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,10 +10,11 @@ using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 
 #pragma warning disable 1591
+[assembly: InternalsVisibleTo("FrendsGoogleCloudStorageTest")]
 
 namespace FrendsGoogleCloudStorage
 {
-    public static class CloudStorageTask
+    public class CloudStorageTask
     {
         /// <summary>
         /// This Task fetches object from Google Cloud Storage.
@@ -27,7 +30,7 @@ namespace FrendsGoogleCloudStorage
             return DownloadObject(storageClient, objectDetails, destination, cancellationToken);
         }
 
-        private static async Task<Result> DownloadObject(StorageClient storageClient, ObjectDetails objectDetails, Destination destination, CancellationToken cancellationToken)
+        internal static async Task<Result> DownloadObject(StorageClient storageClient, ObjectDetails objectDetails, Destination destination, CancellationToken cancellationToken)
         {
             try
             {
