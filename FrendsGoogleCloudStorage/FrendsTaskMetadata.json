@@ -1,7 +1,10 @@
 ﻿{
 	"Tasks": [
 		{
-			"TaskMethod": "FrendsGoogleCloudStorage.CloudStorageTask.GetObject"
+			"TaskMethod": "FrendsGoogleCloudStorage.DownloadFileTaskTask.DownloadFile"
+		},
+		{
+			"TaskMethod": "FrendsGoogleCloudStorage.DownloadStreamTask.DownloadStream"
 		}
 	]
 }
