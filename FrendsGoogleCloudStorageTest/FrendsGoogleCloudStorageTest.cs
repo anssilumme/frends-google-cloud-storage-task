@@ -36,7 +36,7 @@ namespace FrendsGoogleCloudStorageTest
                 _outputHelper.WriteLine("Substituting object download.");
                 WriteTestContent(callInfo.Arg<FileStream>(), "Test content from DownloadObject_WithCreateNewObjectIfNotExistTrue_FileCreated.");
             });
-            CloudStorageTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
+            DownloadFileTaskTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
 
             _outputHelper.WriteLine($"Output path: {_destination.Path}.");
             _outputHelper.WriteLine($"Output filename: {_destination.Name}.");
@@ -56,7 +56,7 @@ namespace FrendsGoogleCloudStorageTest
                 _outputHelper.WriteLine("Substituting object download.");
                 WriteTestContent(callInfo.Arg<FileStream>(), "Test content from DownloadObject_WithCreateNewObjectIfNotExistFalse_FileNotCreated. This content should not exist.");
             });        
-            var result = CloudStorageTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
+            var result = DownloadFileTaskTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
 
             _outputHelper.WriteLine($"Output path: {_destination.Path}.");
             _outputHelper.WriteLine($"Output filename: {_destination.Name}.");

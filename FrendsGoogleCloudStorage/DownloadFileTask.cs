@@ -9,12 +9,11 @@ using FrendsGoogleCloudStorage.Definitions;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 
-#pragma warning disable 1591
 [assembly: InternalsVisibleTo("FrendsGoogleCloudStorageTest")]
 
 namespace FrendsGoogleCloudStorage
 {
-    public class CloudStorageTask
+    public class DownloadFileTaskTask
     {
         /// <summary>
         /// This Task fetches object from Google Cloud Storage.
@@ -24,7 +23,7 @@ namespace FrendsGoogleCloudStorage
         /// <param name="authentication">Authentication details.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>{string Message} </returns>
-        public static Task<Result> GetObject([PropertyTab] ObjectDetails objectDetails, [PropertyTab] Destination destination, [PropertyTab] Authentication authentication, CancellationToken cancellationToken)
+        public static Task<Result> DownloadFile([PropertyTab] ObjectDetails objectDetails, [PropertyTab] Destination destination, [PropertyTab] Authentication authentication, CancellationToken cancellationToken)
         {
             var storageClient = StorageClient.Create(GoogleCredential.FromJson(authentication.ServiceAccount.ServiceAccountJson));
             return DownloadObject(storageClient, objectDetails, destination, cancellationToken);
