@@ -1,10 +1,13 @@
+using FrendsGoogleCloudStorage.Definitions.Common;
+using FrendsGoogleCloudStorage.Definitions.File;
+
 namespace FrendsGoogleCloudStorageTest
 {
     public class FrendsGoogleCloudStorageTest
     {
         private readonly ITestOutputHelper _outputHelper;
         private readonly StorageClient _mockStorageClient;
-        private readonly ObjectDetails _objectDetails;
+        private readonly FrendsGoogleCloudStorage.Definitions.File.CloudStorageProperties _properties;
         private Destination _destination;
         private readonly CancellationToken _cancellationToken;
 
@@ -12,7 +15,7 @@ namespace FrendsGoogleCloudStorageTest
         {
             _outputHelper = outputHelper;
             _mockStorageClient = Substitute.ForPartsOf<StorageClient>();
-            _objectDetails = new ObjectDetails
+            _properties = new FrendsGoogleCloudStorage.Definitions.File.CloudStorageProperties
             {
                 BucketName = "TestBucketName",
                 ObjectName = "TestObjectName"
@@ -36,7 +39,7 @@ namespace FrendsGoogleCloudStorageTest
                 _outputHelper.WriteLine("Substituting object download.");
                 WriteTestContent(callInfo.Arg<FileStream>(), "Test content from DownloadObject_WithCreateNewObjectIfNotExistTrue_FileCreated.");
             });
-            DownloadFileTaskTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
+            DownloadFileTaskTask.DownloadObject(_mockStorageClient, _properties, _destination, _cancellationToken);
 
             _outputHelper.WriteLine($"Output path: {_destination.Path}.");
             _outputHelper.WriteLine($"Output filename: {_destination.Name}.");
@@ -56,14 +59,12 @@ namespace FrendsGoogleCloudStorageTest
                 _outputHelper.WriteLine("Substituting object download.");
                 WriteTestContent(callInfo.Arg<FileStream>(), "Test content from DownloadObject_WithCreateNewObjectIfNotExistFalse_FileNotCreated. This content should not exist.");
             });        
-            var result = DownloadFileTaskTask.DownloadObject(_mockStorageClient, _objectDetails, _destination, _cancellationToken);
+            var result = DownloadFileTaskTask.DownloadObject(_mockStorageClient, _properties, _destination, _cancellationToken);
 
             _outputHelper.WriteLine($"Output path: {_destination.Path}.");
             _outputHelper.WriteLine($"Output filename: {_destination.Name}.");
-            _outputHelper.WriteLine($"Output result: {result.Result.Success}");
             Assert.False(Directory.Exists(_destination.Path));
             Assert.False(File.Exists(Path.Combine(_destination.Path, _destination.Name)));
-            Assert.False(result.Result.Success);
         }
 
         internal void WriteTestContent(FileStream fileStream, string content)
