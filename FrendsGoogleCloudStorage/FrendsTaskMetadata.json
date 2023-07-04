@@ -5,6 +5,9 @@
 		},
 		{
 			"TaskMethod": "FrendsGoogleCloudStorage.DownloadStreamTask.DownloadStream"
+		},
+		{
+			"TaskMethod": "FrendsGoogleCloudStorage.ListObjectsTask.ListObjects"
 		}
 	]
 }
