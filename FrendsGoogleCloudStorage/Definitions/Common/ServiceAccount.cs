@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace FrendsGoogleCloudStorage.Definitions
+namespace FrendsGoogleCloudStorage.Definitions.Common
 {
     /// <summary>
     /// Service account authentication specific properties.

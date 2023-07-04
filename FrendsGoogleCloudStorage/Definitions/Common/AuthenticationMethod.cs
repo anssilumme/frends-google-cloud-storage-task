@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FrendsGoogleCloudStorage.Definitions
+namespace FrendsGoogleCloudStorage.Definitions.Common
 {
     /// <summary>
     /// Google Cloud authentication method

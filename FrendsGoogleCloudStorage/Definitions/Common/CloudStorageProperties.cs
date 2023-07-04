@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace FrendsGoogleCloudStorage.Definitions
+namespace FrendsGoogleCloudStorage.Definitions.Common
 {
     /// <summary>
-    /// Details of the object.
+    /// Cloud Storage related properties.
     /// </summary>
-    public class ObjectDetails
+    public class CloudStorageProperties
     {
         /// <summary>
         /// Bucket's name where object is being stored in Cloud Storage.
@@ -16,12 +16,6 @@ namespace FrendsGoogleCloudStorage.Definitions
         [Required]
         [DisplayFormat(DataFormatString = "Text")]
         public string BucketName { get; set; }
-
-        /// <summary>
-        /// Object's name in Cloud Storage.
-        /// </summary>
-        [Required]
-        [DisplayFormat(DataFormatString = "Text")]
-        public string ObjectName { get; set; }
     }
 }
+

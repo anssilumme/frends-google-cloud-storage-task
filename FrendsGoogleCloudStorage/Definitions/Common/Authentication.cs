@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Text;
 
-namespace FrendsGoogleCloudStorage.Definitions
+namespace FrendsGoogleCloudStorage.Definitions.Common
 {
     /// <summary>
     /// Contains references to available authentication methods.
