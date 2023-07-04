@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using FrendsGoogleCloudStorage.Definitions;
+using FrendsGoogleCloudStorage.Definitions.Common;
+using FrendsGoogleCloudStorage.Definitions.File;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 
@@ -18,18 +18,18 @@ namespace FrendsGoogleCloudStorage
         /// <summary>
         /// This Task fetches object from Google Cloud Storage.
         /// </summary>
-        /// <param name="objectDetails">Details of the downloadable object.</param>
+        /// <param name="properties">Properties of the downloadable object.</param>
         /// <param name="destination">Details of the object's destination.</param>
         /// <param name="authentication">Authentication details.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>{string Message} </returns>
-        public static Task<Result> DownloadFile([PropertyTab] ObjectDetails objectDetails, [PropertyTab] Destination destination, [PropertyTab] Authentication authentication, CancellationToken cancellationToken)
+        public static Task<Google.Apis.Storage.v1.Data.Object> DownloadFile([PropertyTab] Definitions.File.CloudStorageProperties properties, [PropertyTab] Destination destination, [PropertyTab] Authentication authentication, CancellationToken cancellationToken)
         {
             var storageClient = StorageClient.Create(GoogleCredential.FromJson(authentication.ServiceAccount.ServiceAccountJson));
-            return DownloadObject(storageClient, objectDetails, destination, cancellationToken);
+            return DownloadObject(storageClient, properties, destination, cancellationToken);
         }
 
-        internal static async Task<Result> DownloadObject(StorageClient storageClient, ObjectDetails objectDetails, Destination destination, CancellationToken cancellationToken)
+        internal static async Task<Google.Apis.Storage.v1.Data.Object> DownloadObject(StorageClient storageClient, Definitions.File.CloudStorageProperties properties, Destination destination, CancellationToken cancellationToken)
         {
             try
             {
@@ -45,21 +45,13 @@ namespace FrendsGoogleCloudStorage
                     }
                     else
                     {
-                        return new Result
-                        {
-                            Success = false,
-                            Message = "Directory does not exist."
-                        };
+                        throw new DirectoryNotFoundException($"Directory does not exist.");
                     }
                 }
             }
             catch (IOException e)
             {
-                return new Result
-                {
-                    Success = false,
-                    Message = e.Message
-                };
+                throw new IOException(e.Message, e);
             }
 
             var stringBuilder = new StringBuilder(destination.Path);
@@ -75,15 +67,7 @@ namespace FrendsGoogleCloudStorage
 
             var destinationPath = stringBuilder.ToString();
             using var outputFile = File.OpenWrite(destinationPath);
-            await storageClient.DownloadObjectAsync(objectDetails.BucketName, objectDetails.ObjectName, outputFile, null, cancellationToken);
-
-            var output = new Result
-            {
-                Success = true,
-                Message = $"Downloaded {objectDetails.ObjectName} to {destinationPath}."
-            };
-
-            return output;
+            return await storageClient.DownloadObjectAsync(properties.BucketName, properties.ObjectName, outputFile, null, cancellationToken);
         }
     }
 }
